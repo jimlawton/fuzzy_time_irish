@@ -1,0 +1,17 @@
+{
+  "uuid": "ac75ff14-5731-4368-84c1-a5feeabd2f11",
+  "shortName": "fuzzy_time_irish",
+  "longName": "fuzzy_time_irish",
+  "companyName": "MakeAwesomeHappen",
+  "versionCode": 1,
+  "versionLabel": "1.0.0",
+  "watchapp": {
+    "watchface": false
+  },
+  "appKeys": {
+    "dummy": 0
+  },
+  "resources": {
+    "media": []
+  }
+}
