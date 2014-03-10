@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "num2words.h"
 
 static Window *window;
 static TextLayer *text_layer;
