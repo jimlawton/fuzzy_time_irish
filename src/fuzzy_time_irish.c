@@ -21,15 +21,15 @@
 //#define AM_REVERSE
 
 /* Enable hourly vibration. */
-//#define HOURLY_VIBE
-//#define HOURLY_VIBE_START 8
-//#define HOURLY_VIBE_END 23
+#define HOURLY_VIBE
+#define HOURLY_VIBE_START 8
+#define HOURLY_VIBE_END 23
 
 /* Enable animation. */
 //#define ANIMATION
 
 /* Display top bar. */
-//#define TOP_BAR
+#define TOP_BAR
 
 /* Display bottom bar. */
 //#define BOTTOM_BAR
@@ -94,13 +94,15 @@ static void animationInStoppedHandler(struct Animation *animation, bool finished
 static void animationOutStoppedHandler(struct Animation *animation, bool finished, void *context) {
     //reset out layer to x=144
     TextLayer *outside = (TextLayer *)context;
-    GRect rect = layer_get_frame(&outside->layer);
+    Layer *layer = text_layer_get_layer(outside);
+    GRect rect = layer_get_frame(layer);
     rect.origin.x = 144;
-    layer_set_frame(&outside->layer, rect);
+    layer_set_frame(layer, rect);
     busy_animating_out = false;
 }
 #endif
 
+#ifdef AM_REVERSE
 static void set_am_style(void) {
     text_layer_set_text_color(line3.layer[0], GColorBlack);
     text_layer_set_background_color(line3.layer[0], GColorWhite);
@@ -108,6 +110,7 @@ static void set_am_style(void) {
     text_layer_set_background_color(line3.layer[1], GColorWhite);
     text_layer_set_background_color(line3_bg, GColorWhite);
 }
+#endif
 
 static void set_pm_style(void) {
     text_layer_set_text_color(line3.layer[0], GColorWhite);
@@ -117,6 +120,7 @@ static void set_pm_style(void) {
     text_layer_set_background_color(line3_bg, GColorClear);
 }
 
+#ifdef AM_REVERSE
 static void set_line2_am(void) {
     Layer *layer = text_layer_get_layer(line2.layer[0]);
     GRect rect = layer_get_frame(layer);
@@ -130,6 +134,7 @@ static void set_line2_am(void) {
         text_layer_set_font(line2.layer[0], fonts_get_system_font(LINE2_BOLD_FONT));
     }
 }
+#endif
 
 static void set_line2_pm(void) {
     Layer *layer = text_layer_get_layer(line2.layer[0]);
@@ -173,12 +178,11 @@ void updateLayer(TextLine *animating_line, int line) {
     out_rect.origin.x -= 144;
 
 #ifdef ANIMATION
-    //animate out current layer
     busy_animating_out = true;
-    property_animation_init_layer_frame(&animating_line->layer_animation[1], &inside->layer, NULL, &out_rect);
-    animation_set_duration(&animating_line->layer_animation[1].animation, ANIMATION_DURATION);
-    animation_set_curve(&animating_line->layer_animation[1].animation, AnimationCurveEaseOut);
-    animation_set_handlers(&animating_line->layer_animation[1].animation,
+    property_animation_init_layer_frame(animating_line->layer_animation[1], in_layer, NULL, &out_rect);
+    animation_set_duration(animating_line->layer_animation[1].animation, ANIMATION_DURATION);
+    animation_set_curve(animating_line->layer_animation[1].animation, AnimationCurveEaseOut);
+    animation_set_handlers(animating_line->layer_animation[1].animation,
                            (AnimationHandlers) { .stopped = (AnimationStoppedHandler)animationOutStoppedHandler },
                            (void *)inside);
     animation_schedule(&animating_line->layer_animation[1].animation);
@@ -200,7 +204,6 @@ void updateLayer(TextLine *animating_line, int line) {
     }
 
 #ifdef ANIMATION
-    //animate in new layer
     busy_animating_in = true;
     property_animation_init_layer_frame(&animating_line->layer_animation[0], &outside->layer, NULL, &in_rect);
     animation_set_duration(&animating_line->layer_animation[0].animation, ANIMATION_DURATION);
