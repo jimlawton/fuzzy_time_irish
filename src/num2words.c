@@ -13,14 +13,13 @@ static const char * const TENS[] = {
      "", "ten", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"
 };
 
-static const char * STR_OH_CLOCK = "o'clock";
+static const char * STR_OCLOCK = "o'clock";
 static const char * STR_NOON = "noon";
 static const char * STR_MIDNIGHT = "midnight";
 static const char * STR_QUARTER = "quarter";
 static const char * STR_TO = "to";
 static const char * STR_PAST = "past";
 static const char * STR_HALF = "half";
-static const char * STR_AFTER = "after";
 
 static size_t append_number(char *words, int num) {
     int tens_val = num / 10 % 10;
@@ -74,7 +73,7 @@ void fuzzy_time_to_words(int hours, int minutes, char *words, size_t length) {
         if (fuzzy_minutes == 15) {
             remaining -= append_string(words, remaining, STR_QUARTER);
             remaining -= append_string(words, remaining, " ");
-            remaining -= append_string(words, remaining, STR_AFTER);
+            remaining -= append_string(words, remaining, STR_PAST);
             remaining -= append_string(words, remaining, " ");
         } else if (fuzzy_minutes == 45) {
             remaining -= append_string(words, remaining, STR_QUARTER);
@@ -90,7 +89,7 @@ void fuzzy_time_to_words(int hours, int minutes, char *words, size_t length) {
         } else if (fuzzy_minutes < 30) {
             remaining -= append_number(words, fuzzy_minutes);
             remaining -= append_string(words, remaining, " ");
-            remaining -= append_string(words, remaining, STR_AFTER);
+            remaining -= append_string(words, remaining, STR_PAST);
             remaining -= append_string(words, remaining, " ");
         } else {
             remaining -= append_number(words, 60 - fuzzy_minutes);
@@ -111,6 +110,6 @@ void fuzzy_time_to_words(int hours, int minutes, char *words, size_t length) {
 
     if (fuzzy_minutes == 0 && !(fuzzy_hours == 0 || fuzzy_hours == 12)) {
         remaining -= append_string(words, remaining, " ");
-        remaining -= append_string(words, remaining, STR_OH_CLOCK);
+        remaining -= append_string(words, remaining, STR_OCLOCK);
     }
 }
