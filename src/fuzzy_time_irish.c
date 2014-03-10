@@ -22,13 +22,12 @@ static void window_load(Window *window) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Window load");
     Layer *windowLayer = window_get_root_layer(window);
     GRect frame = layer_get_frame(windowLayer);
-    //GRect bounds = layer_get_bounds(windowLayer);
-    GFont font = fonts_get_system_font(FONT_KEY_DROID_SERIF_28_BOLD);
+    GFont font = fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
 
     window_set_background_color(window, GColorBlack);
 
     textLayer = text_layer_create(GRect(0, 20, frame.size.w, frame.size.h - 20));
-    text_layer_set_text_alignment(textLayer, GTextAlignmentCenter);
+    text_layer_set_text_alignment(textLayer, GTextAlignmentLeft);
     text_layer_set_background_color(textLayer, GColorBlack);
     text_layer_set_text_color(textLayer, GColorWhite);
     text_layer_set_font(textLayer, font);
