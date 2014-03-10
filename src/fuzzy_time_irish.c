@@ -4,8 +4,11 @@
  *
  * Inspired by Fuzzy Time +, Fuzzy Time.
  *
- * Define AM_REVERSE to turn on reverse highlight during a.m. hours.
- * Define HOURLY_VIBE to enable the hourly vibration.
+ * Configuration:
+ *  - Define AM_REVERSE to turn on reverse highlight during a.m. hours.
+ *  - Define HOURLY_VIBE to enable the hourly vibration.
+ *  - Define TOP_BAR to show the top bar text.
+ *  - Define BOTTOM_BAR to show the bottom bar text.
  */
 
 #include <pebble.h>
@@ -78,7 +81,6 @@ static TimeLines new_time;
 const int line1_y = 18;
 const int line2_y = 60;
 const int line3_y = 102;
-
 
 #ifdef ANIMATION
 static bool busy_animating_in = false;
