@@ -21,15 +21,15 @@
 //#define AM_REVERSE
 
 /* Enable hourly vibration. */
-#define HOURLY_VIBE
-#define HOURLY_VIBE_START 8
-#define HOURLY_VIBE_END 23
+//#define HOURLY_VIBE
+//#define HOURLY_VIBE_START 8
+//#define HOURLY_VIBE_END 23
 
 /* Enable animation. */
 //#define ANIMATION
 
 /* Display top bar. */
-#define TOP_BAR
+//#define TOP_BAR
 
 /* Display bottom bar. */
 //#define BOTTOM_BAR
@@ -214,13 +214,13 @@ void updateLayer(TextLine *animating_line, int line) {
 
 static void update_watch(struct tm *t) {
     fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
-    strftime(str_topbar, sizeof(str_topbar), "%H:%M | %A | %e %b", t);
-
 #ifdef TOP_BAR
+    strftime(str_topbar, sizeof(str_topbar), "%H:%M | %A | %e %b", t);
     text_layer_set_text(topbarLayer, str_topbar);
 #endif
 
 #ifdef BOTTOM_BAR
+    strftime(str_bottombar, sizeof(str_bottombar), " %H%M | Week %W", t);
     text_layer_set_text(bottombarLayer, str_bottombar);
 #endif
 
