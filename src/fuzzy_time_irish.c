@@ -62,33 +62,6 @@ static void deinit(void) {
     window_destroy(window);
 }
 
-#if 0
-// v1 stuff.
-
-#define MY_UUID { 0xD4, 0xED, 0x05, 0xFF, 0x75, 0x8B, 0x46, 0x6F, 0x80, 0xBF, 0x55, 0xFA, 0xD9, 0xCB, 0xAA, 0x3C }
-
-static void handle_init(AppContextRef ctx) {
-    (void) ctx;
-
-    window_init(&s_data.window, "My Fuzzy Time");
-    const bool animated = true;
-    window_stack_push(&s_data.window, animated);
-
-    window_set_background_color(&s_data.window, GColorBlack);
-    GFont gotham = fonts_get_system_font(FONT_KEY_DROID_SERIF_28_BOLD);
-
-    text_layer_init(&s_data.label, GRect(0, 20, s_data.window.layer.frame.size.w, s_data.window.layer.frame.size.h - 20) );
-    text_layer_set_background_color(&s_data.label, GColorBlack);
-    text_layer_set_text_color(&s_data.label, GColorWhite);
-    text_layer_set_font(&s_data.label, gotham);
-    layer_add_child(&s_data.window.layer, &s_data.label.layer);
-
-    PblTm t;
-    get_time(&t);
-    update_time(&t);
-}
-#endif
-
 int main(void) {
     init();
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
