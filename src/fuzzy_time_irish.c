@@ -118,7 +118,8 @@ static void set_pm_style(void) {
 }
 
 static void set_line2_am(void) {
-    GRect rect = layer_get_frame(line2.layer[0]);
+    Layer *layer = text_layer_get_layer(line2.layer[0]);
+    GRect rect = layer_get_frame(layer);
     if (rect.origin.x == 0) {
         text_layer_set_text_color(line2.layer[1], GColorBlack);
         text_layer_set_background_color(line2.layer[1], GColorWhite);
@@ -131,7 +132,8 @@ static void set_line2_am(void) {
 }
 
 static void set_line2_pm(void) {
-    GRect rect = layer_get_frame(line2.layer[0]);
+    Layer *layer = text_layer_get_layer(line2.layer[0]);
+    GRect rect = layer_get_frame(layer);
     if (rect.origin.x == 0) {
         text_layer_set_font(line2.layer[1], fonts_get_system_font(LINE2_BOLD_FONT));
     } else {
@@ -140,7 +142,8 @@ static void set_line2_pm(void) {
 }
 
 static void reset_line2(void) {
-    GRect rect = layer_get_frame(line2.layer[0]);
+    Layer *layer = text_layer_get_layer(line2.layer[0]);
+    GRect rect = layer_get_frame(layer);
     if (rect.origin.x == 0) {
         text_layer_set_text_color(line2.layer[1], GColorWhite);
         text_layer_set_background_color(line2.layer[1], GColorBlack);
@@ -154,13 +157,17 @@ static void reset_line2(void) {
 
 void updateLayer(TextLine *animating_line, int line) {
     TextLayer *inside, *outside;
-    GRect rect = layer_get_frame(animating_line->layer[0]);
+    Layer *layer = text_layer_get_layer(animating_line->layer[0]);
+    GRect rect = layer_get_frame(layer);
 
     inside = (rect.origin.x == 0) ? animating_line->layer[0] : animating_line->layer[1];
+    Layer *in_layer = text_layer_get_layer(inside);
     outside = (inside == animating_line->layer[0]) ? animating_line->layer[1] : animating_line->layer[0];
+    Layer *out_layer = text_layer_get_layer(outside);
 
-    GRect in_rect = layer_get_frame(outside);
-    GRect out_rect = layer_get_frame(inside);
+    /* TODO: is this the wrong way round? */
+    GRect in_rect = layer_get_frame(in_layer);
+    GRect out_rect = layer_get_frame(out_layer);
 
     in_rect.origin.x -= 144;
     out_rect.origin.x -= 144;
@@ -207,7 +214,7 @@ void updateLayer(TextLine *animating_line, int line) {
 
 static void update_watch(struct tm *t) {
     fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
-    string_format_time(str_topbar, sizeof(str_topbar), "%H:%M | %A | %e %b", t);
+    strftime(str_topbar, sizeof(str_topbar), "%H:%M | %A | %e %b", t);
 
 #ifdef TOP_BAR
     text_layer_set_text(topbarLayer, str_topbar);
@@ -263,12 +270,12 @@ static void update_watch(struct tm *t) {
 static void init_watch(struct tm *t) {
     fuzzy_time(t->tm_hour, t->tm_min, new_time.line1, new_time.line2, new_time.line3);
 #ifdef TOP_BAR
-    string_format_time(str_topbar, sizeof(str_topbar), "%H:%M | %A | %e %b", t);
-    text_layer_set_text(&topbarLayer, str_topbar);
+    strftime(str_topbar, sizeof(str_topbar), "%H:%M | %A | %e %b", t);
+    text_layer_set_text(topbarLayer, str_topbar);
 #endif
 #ifdef BOTTOM_BAR
-    string_format_time(str_bottombar, sizeof(str_bottombar), " %H%M | Week %W", t);
-    text_layer_set_text(&bottombarLayer, str_bottombar);
+    strftime(str_bottombar, sizeof(str_bottombar), " %H%M | Week %W", t);
+    text_layer_set_text(bottombarLayer, str_bottombar);
 #endif
     strcpy(cur_time.line1, new_time.line1);
     strcpy(cur_time.line2, new_time.line2);
@@ -312,20 +319,16 @@ static void window_load(Window *window) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Window load");
     Layer *windowLayer = window_get_root_layer(window);
     GRect frame = layer_get_frame(windowLayer);
-    GFont font = fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
 
     window_set_background_color(window, GColorBlack);
 
-    // Init the text layers used to show the time
     line1.layer[0] = text_layer_create(GRect(0, line1_y, frame.size.w, 50));
     text_layer_set_text_alignment(line1.layer[0], GTextAlignmentLeft);
     text_layer_set_background_color(line1.layer[0], GColorClear);
     text_layer_set_text_color(line1.layer[0], GColorWhite);
-    text_layer_set_font(line1.layer[0], fonts_get_system_font(LINE1_FONT));
     layer_add_child(windowLayer, text_layer_get_layer(line1.layer[0]));
 
     line1.layer[1] = text_layer_create(GRect(frame.size.w, line1_y, frame.size.w, 50));
-    text_layer_set_text_alignment(line1.layer[1], GTextAlignmentLeft);
     text_layer_set_background_color(line1.layer[1], GColorClear);
     text_layer_set_text_color(line1.layer[1], GColorWhite);
     text_layer_set_font(line1.layer[1], fonts_get_system_font(LINE1_FONT));
@@ -345,7 +348,7 @@ static void window_load(Window *window) {
     text_layer_set_font(line2.layer[1], fonts_get_system_font(LINE2_NORMAL_FONT));
 
     line3.layer[0] = text_layer_create(GRect(0, line3_y, frame.size.w, 50));
-    text_layer_set_text_alignment(&line3.layer[0], GTextAlignmentLeft);
+    text_layer_set_text_alignment(line3.layer[0], GTextAlignmentLeft);
     //text_layer_set_background_color(line3.layer[0], GColorClear);
     //text_layer_set_text_color(line3.layer[0], GColorWhite);
     text_layer_set_font(line3.layer[0], fonts_get_system_font(LINE3_FONT));
